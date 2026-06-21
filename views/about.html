@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | Hidden Malaysia</title>
+  <meta name="description" content="Why six final-year UTHM students built Hidden Malaysia — a guide to the overlooked half of the country." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <style>
+    .about-hero { padding: 150px 0 70px; background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; }
+    .about-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .about-hero h1 { color: #fff; }
+    .about-hero p { color: rgba(255,255,255,0.85); margin-top: 14px; font-size: 1.1rem; }
+    .quote-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: var(--radius-lg);
+      padding: 40px; font-family: var(--font-display); font-style: italic; font-size: 1.6rem; line-height: 1.4; color: #fff; }
+    .mission { max-width: 720px; margin: 0 auto; }
+    .mission p { font-size: 1.1rem; margin-bottom: 20px; color: #333; }
+    .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .tech-list dt { font-weight: 700; margin-top: 14px; }
+    .tech-list dd { color: var(--text-muted); }
+    .team-card { background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 28px; text-align: center; }
+    .team-avatar { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 14px;
+      background: var(--green-mid); color: #fff; font-family: var(--font-display); font-size: 1.8rem; }
+    .team-role { color: var(--terracotta); font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ack { background: var(--sand-dark); }
+    .ack p { max-width: 720px; margin: 0 auto; color: var(--text-muted); text-align: center; }
+    @media (max-width: 1024px){ .about-hero-grid, .tech-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============ NAVBAR (shared) ============ -->
+  <header class="navbar transparent" id="navbar">
+    <a href="/" class="logo"><div class="logo-text">HIDDEN MALAYSIA</div><div class="logo-tag">Discover the gem hidden from the crowd</div></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/#explore" class="nav-link">Explore</a>
+      <div class="dropdown"><a href="/#explore" class="nav-link">States ⌄</a>
+        <div class="dropdown-menu">
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a></div></div>
+      <a href="/blog" class="nav-link">Articles</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn search-trigger" aria-label="Open search" onclick="openSearch()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <a href="/admin/login" class="btn-login">Login</a>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMobile(true)"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="backdrop" id="backdrop" onclick="toggleMobile(false)"></div>
+  <aside class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
+    <button class="mobile-close" aria-label="Close menu" onclick="toggleMobile(false)">&times;</button>
+    <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+    <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a>
+    <a href="/blog">Articles</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/admin/login">Login</a>
+  </aside>
+
+  <!-- ============ SEARCH OVERLAY (shared) ============ -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" aria-label="Close search" onclick="closeSearch()">&times;</button>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search hidden gems, states, stories…" aria-label="Search" oninput="onSearchInput()" />
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <p class="search-hint" id="searchHint">Try “cave”, “waterfall”, “Ipoh” or “market”.</p>
+    </div>
+  </div>
+
+  <main id="main" role="main">
+    <!-- ============ A — HERO ============ -->
+    <section class="about-hero">
+      <div class="container about-hero-grid">
+        <div data-aos="fade-up">
+          <span class="kicker" style="color:#FFD9A0;">Our story</span>
+          <h1 class="mt-2">Why we built Hidden Malaysia</h1>
+          <p>Six final-year students. One overlooked half of the country.</p>
+        </div>
+        <div class="quote-card" data-aos="fade-up" data-aos-delay="100">
+          “The best places to visit are the ones nobody told you to visit.”
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ B — MISSION ============ -->
+    <section class="section container">
+      <div class="mission" data-aos="fade-up">
+        <span class="kicker">The mission</span>
+        <h2 class="serif mt-2 mb-5">More than the postcards</h2>
+        <p>Malaysia's tourism story is dominated by a handful of icons — KLCC, Penang's hawker streets, Langkawi beaches. But the country is far more varied than the postcards suggest. Hidden Malaysia is built to surface what's actually there beyond the well-trodden routes.</p>
+        <p>We focus on six states most travel guides skim over: Perlis, Kedah, Perak, Pahang, Negeri Sembilan, and Johor. From limestone caves in tin-mining country to a Minangkabau palace built without a single nail, every story here is a place a traveller wouldn't find by accident.</p>
+        <p>This is a student project — built by final-year Information Technology students at Universiti Tun Hussein Onn Malaysia for our Web Development course (BIT21503). The site uses Node.js, Express, MySQL, and a hand-built interactive SVG map. Everything you see is original work, with stories sourced from on-the-ground travel reporting and properly credited.</p>
+      </div>
+    </section>
+
+    <!-- ============ C — SIX STATES ============ -->
+    <section class="section section--sand">
+      <div class="container">
+        <span class="kicker">Where we go</span>
+        <h2 class="serif mt-2">Six states. Endless stories.</h2>
+        <div class="grid grid-3 mt-5" id="stateGrid">
+          <a class="state-card" href="/state/perlis" data-aos="fade-up">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Padi_Field_in_Kangar%2C_Perlis_%285834859142%29.jpg/1280px-Padi_Field_in_Kangar%2C_Perlis_%285834859142%29.jpg" alt="Perlis" onerror="HM.imgFallback(this,'perlis')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #085041cc 0%, transparent 70%)"><div class="state-card-name">Perlis</div><div class="state-card-tag">Malaysia's smallest state, quietly magnificent</div></div>
+            <span class="state-count" id="count-perlis">…</span></a>
+          <a class="state-card" href="/state/kedah" data-aos="fade-up" data-aos-delay="60">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Langkawi_cablecar_bridge.jpg/1280px-Langkawi_cablecar_bridge.jpg" alt="Kedah" onerror="HM.imgFallback(this,'kedah')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #085041cc 0%, transparent 70%)"><div class="state-card-name">Kedah</div><div class="state-card-tag">The rice bowl of Malaysia, untouched and golden</div></div>
+            <span class="state-count" id="count-kedah">…</span></a>
+          <a class="state-card" href="/state/perak" data-aos="fade-up" data-aos-delay="120">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Concubine_Lane_2.jpg/1280px-Concubine_Lane_2.jpg" alt="Perak" onerror="HM.imgFallback(this,'perak')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #0C447Ccc 0%, transparent 70%)"><div class="state-card-name">Perak</div><div class="state-card-tag">Tin town glory, jungle rivers, and forgotten kampungs</div></div>
+            <span class="state-count" id="count-perak">…</span></a>
+          <a class="state-card" href="/state/pahang" data-aos="fade-up" data-aos-delay="180">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/BOH_tea_plantations%2C_Cameron_Highlands%2C_Pahang%2C_Malaysia.jpg/1280px-BOH_tea_plantations%2C_Cameron_Highlands%2C_Pahang%2C_Malaysia.jpg" alt="Pahang" onerror="HM.imgFallback(this,'pahang')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #633806cc 0%, transparent 70%)"><div class="state-card-name">Pahang</div><div class="state-card-tag">Malaysia's largest state, mostly unseen</div></div>
+            <span class="state-count" id="count-pahang">…</span></a>
+          <a class="state-card" href="/state/negeri_sembilan" data-aos="fade-up" data-aos-delay="240">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Istana_Seri_Menanti_Negeri_Sembilan.jpg/1280px-Istana_Seri_Menanti_Negeri_Sembilan.jpg" alt="Negeri Sembilan" onerror="HM.imgFallback(this,'negeri_sembilan')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #72243Ecc 0%, transparent 70%)"><div class="state-card-name">Negeri Sembilan</div><div class="state-card-tag">Minangkabau heritage, paddy fields, roadside food legends</div></div>
+            <span class="state-count" id="count-negeri_sembilan">…</span></a>
+          <a class="state-card" href="/state/johor" data-aos="fade-up" data-aos-delay="300">
+            <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Sultan_Abu_Bakar_State_Mosque.jpg/1280px-Sultan_Abu_Bakar_State_Mosque.jpg" alt="Johor" onerror="HM.imgFallback(this,'johor')" />
+            <div class="state-card-overlay" style="background:linear-gradient(to top, #3C3489cc 0%, transparent 70%)"><div class="state-card-name">Johor</div><div class="state-card-tag">Beyond Johor Bahru — rivers, islands and ancient rainforest</div></div>
+            <span class="state-count" id="count-johor">…</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ D — TECH ============ -->
+    <section class="section container">
+      <span class="kicker">How we built this site</span>
+      <h2 class="serif mt-2 mb-6">Behind the scenes</h2>
+      <div class="tech-grid">
+        <p class="text-muted" data-aos="fade-up">Hidden Malaysia is a full-stack web application built entirely from scratch — no website builders, no templates, no CSS frameworks. The frontend is plain HTML, CSS, and vanilla JavaScript that talks to a Node.js + Express API, which in turn reads from a MySQL database. The centrepiece is a hand-built interactive SVG map of Peninsular Malaysia where each state is clickable.</p>
+        <dl class="tech-list" data-aos="fade-up" data-aos-delay="100">
+          <dt>Frontend</dt><dd>HTML5, CSS3, vanilla JavaScript, AOS (animations)</dd>
+          <dt>Backend</dt><dd>Node.js, Express.js</dd>
+          <dt>Database</dt><dd>MySQL</dd>
+          <dt>Hosting</dt><dd>Railway / Render</dd>
+          <dt>Design</dt><dd>Custom SVG map of Malaysia, Playfair Display + Inter typography</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============ F — ACKNOWLEDGEMENTS ============ -->
+    <section class="section ack">
+      <div class="container">
+        <p>This project is built with respect for the local communities, photographers, and travel writers whose work informed our content. All images used are properly licensed under Creative Commons or sourced from open repositories. See our <a href="/contact" class="text-terracotta">Image Credits</a> page for full attributions.</p>
+        <p style="margin-top:16px;">We log search queries (without identifying users) to improve site content. IP addresses are hashed before storage.</p>
+      </div>
+    </section>
+
+    <!-- ============ G — CTA ============ -->
+    <section class="section container text-center">
+      <h2 class="serif">Start exploring</h2>
+      <div class="flex items-center gap-4 mt-5" style="justify-content:center; flex-wrap:wrap;">
+        <a href="/#top" class="btn btn-primary">Open the map →</a>
+        <a href="/blog" class="btn btn-outline">Read latest stories</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER (shared) ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><div class="footer-logo">HIDDEN MALAYSIA</div><p class="footer-logo-tag">Six states. Endless stories.</p></div>
+        <div class="footer-col"><h5>Explore</h5>
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a></div>
+        <div class="footer-col"><h5>About</h5><a href="/about">About us</a><a href="/contact">Contact</a><a href="/contact">Submit a story</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Hidden Malaysia · A BIT21503 group project at UTHM</span><a href="/about">Sources &amp; Credits</a></div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

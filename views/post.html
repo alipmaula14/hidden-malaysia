@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story | Hidden Malaysia</title>
+  <meta name="description" content="A hidden gem from underrated Malaysia." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <style>
+    /* Page-specific helpers not in the shared sheet */
+    .breadcrumb { font-size: 0.85rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
+    .breadcrumb a:hover { color: #fff; text-decoration: underline; }
+    .post-hero .state-hero__content { bottom: 2.5rem; }
+    .post-badges { display: flex; gap: 10px; margin-bottom: 10px; }
+    .post-hero__meta { display: flex; gap: 18px; flex-wrap: wrap; color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-top: 10px; }
+    .tag-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-pill { background: var(--sand-dark); color: var(--terracotta-dark); padding: 5px 14px; border-radius: var(--radius-full); font-size: 0.82rem; }
+    .tag-pill:hover { background: var(--border-light); }
+    .source-cite { font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 16px; margin-top: 30px; }
+    .source-cite a { color: var(--terracotta); text-decoration: underline; }
+    .char-counter { font-size: 0.78rem; color: var(--text-muted); text-align: right; margin-top: 4px; }
+    .inline-share { display: none; gap: 10px; margin: 24px 0; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Toast */
+    .toast-wrap { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .toast { background: var(--green-deep); color: #fff; padding: 11px 20px; border-radius: var(--radius-full); font-size: 0.9rem; box-shadow: var(--shadow-md); animation: fadeIn .2s ease; }
+    /* Mobile bottom action bar */
+    .mobile-actions { display: none; }
+    @media (max-width: 640px) {
+      .inline-share { display: flex; }
+      .mobile-actions {
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 90; display: flex;
+        background: var(--white); border-top: 1px solid var(--border-light); box-shadow: var(--shadow-lg);
+      }
+      .mobile-actions button { flex: 1; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.72rem; color: var(--text-dark); }
+      body { padding-bottom: 64px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#article" class="skip-link">Skip to main content</a>
+
+  <!-- ============ NAVBAR (shared) ============ -->
+  <header class="navbar transparent" id="navbar">
+    <a href="/" class="logo">
+      <div class="logo-text">HIDDEN MALAYSIA</div>
+      <div class="logo-tag">Discover the gem hidden from the crowd</div>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/#explore" class="nav-link">Explore</a>
+      <div class="dropdown">
+        <a href="/#explore" class="nav-link">States ⌄</a>
+        <div class="dropdown-menu">
+          <a href="/state/perlis">Perlis</a>
+          <a href="/state/kedah">Kedah</a>
+          <a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a>
+          <a href="/state/negeri_sembilan">Negeri Sembilan</a>
+          <a href="/state/johor">Johor</a>
+        </div>
+      </div>
+      <a href="/blog" class="nav-link">Articles</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn search-trigger" aria-label="Open search" onclick="openSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <a href="/admin/login" class="btn-login">Login</a>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMobile(true)"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Reading progress bar (Feature 1) -->
+  <div class="reading-progress" aria-hidden="true"><div class="reading-progress__bar"></div></div>
+  <div class="backdrop" id="backdrop" onclick="toggleMobile(false)"></div>
+  <aside class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
+    <button class="mobile-close" aria-label="Close menu" onclick="toggleMobile(false)">&times;</button>
+    <a href="/state/perlis">Perlis</a>
+    <a href="/state/kedah">Kedah</a>
+    <a href="/state/perak">Perak</a>
+    <a href="/state/pahang">Pahang</a>
+    <a href="/state/negeri_sembilan">Negeri Sembilan</a>
+    <a href="/state/johor">Johor</a>
+    <a href="/blog">Articles</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/admin/login">Login</a>
+  </aside>
+
+  <!-- ============ SEARCH OVERLAY (shared) ============ -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" aria-label="Close search" onclick="closeSearch()">&times;</button>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search hidden gems, states, stories…" aria-label="Search" oninput="onSearchInput()" />
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <p class="search-hint" id="searchHint">Try “cave”, “waterfall”, “Ipoh” or “market”.</p>
+    </div>
+  </div>
+
+  <!-- 404 / error fallback (shown only if the post can't be loaded) -->
+  <div id="notFound" style="display:none; min-height:80vh; display:none; place-items:center; text-align:center; padding:120px 20px;">
+    <div>
+      <h1 class="serif">Story not found</h1>
+      <p class="text-muted mt-3">We couldn't find that story. It may have been moved or unpublished.</p>
+      <a href="/" class="btn btn-primary mt-5">Back to homepage</a>
+    </div>
+  </div>
+
+  <!-- Main article (populated by JS) -->
+  <main id="article" role="main" style="display:none;">
+    <!-- ============ SECTION A — POST HERO ============ -->
+    <section class="post-hero">
+      <img id="heroImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;" />
+      <div class="state-hero__overlay"></div>
+      <div class="state-hero__content">
+        <div class="container">
+          <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb"></nav>
+          <div class="post-badges" id="postBadges"></div>
+          <h1 class="state-hero__title" id="postTitle" style="font-size:clamp(2rem,4.5vw,3.25rem);"></h1>
+          <div class="post-hero__meta" id="postMeta"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION C — STICKY SHARE BAR (desktop) ============ -->
+    <div class="share-bar" id="shareBar" aria-label="Share this story">
+      <button class="share-button" aria-label="Share on X" onclick="shareTwitter()" title="Share on X">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L6 22H2.9l7.5-8.6L2 2h6.5l4.5 6.6L18.9 2z"/></svg>
+      </button>
+      <button class="share-button" aria-label="Share on Facebook" onclick="shareFacebook()" title="Share on Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+      </button>
+      <button class="share-button" aria-label="Copy link" onclick="copyLink()" title="Copy link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+      </button>
+      <button class="share-button" id="bookmarkBtn" aria-label="Bookmark" onclick="toggleBookmark()" title="Bookmark">
+        <svg id="bookmarkIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+    </div>
+
+    <!-- ============ SECTION B — ARTICLE BODY ============ -->
+    <article class="section">
+      <div class="post-content" id="postContent"></div>
+
+      <!-- Inline share (mobile) -->
+      <div class="post-content inline-share">
+        <button class="btn-icon" aria-label="Share on X" onclick="shareTwitter()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L6 22H2.9l7.5-8.6L2 2h6.5l4.5 6.6L18.9 2z"/></svg></button>
+        <button class="btn-icon" aria-label="Share on Facebook" onclick="shareFacebook()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></button>
+        <button class="btn-icon" aria-label="Copy link" onclick="copyLink()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>
+      </div>
+
+      <!-- SECTION D — Source citation -->
+      <div class="post-content"><div class="source-cite" id="sourceCite" style="display:none;"></div></div>
+
+      <!-- SECTION E — Tags -->
+      <div class="post-content mt-5">
+        <div class="flex items-center gap-3" style="flex-wrap:wrap;">
+          <strong style="font-size:0.85rem;">Tagged:</strong>
+          <div class="tag-pills" id="tagPills"></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ STAY NEARBY (accommodations) ============ -->
+    <section class="section section--sand" id="staySection" style="display:none;">
+      <div class="container">
+        <div class="eyebrow">PLAN YOUR STAY</div>
+        <h2 class="serif">Stay nearby</h2>
+        <div class="accommodations-grid" id="accomGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION F — RELATED POSTS ============ -->
+    <section class="section">
+      <div class="container">
+        <h2 class="serif" id="relatedHeading">More stories</h2>
+        <div class="related-grid mt-5" id="relatedGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION G — COMMENTS ============ -->
+    <section class="section container" id="commentsSection" style="max-width:760px;">
+      <h2 class="serif" id="commentsHeading">Comments</h2>
+
+      <!-- Comment form -->
+      <form class="comment-form" id="commentForm" novalidate>
+        <div class="grid grid--2 gap-4">
+          <div class="form-group">
+            <label class="label" for="cName">Name</label>
+            <input class="input" id="cName" name="name" type="text" required maxlength="100" />
+            <div class="field-error" id="errName" style="display:none;"></div>
+          </div>
+          <div class="form-group">
+            <label class="label" for="cEmail">Email <span class="text-muted" style="font-weight:400;">(not published)</span></label>
+            <input class="input" id="cEmail" name="email" type="email" required />
+            <div class="field-error" id="errEmail" style="display:none;"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label" for="cContent">Comment</label>
+          <textarea class="input textarea" id="cContent" name="content" required maxlength="1000" oninput="updateCounter()"></textarea>
+          <div class="char-counter"><span id="charCount">0</span>/1000</div>
+          <div class="field-error" id="errContent" style="display:none;"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="commentSubmit">Post comment</button>
+        <div class="news-msg" id="commentMsg" role="status" style="color:var(--green-mid);"></div>
+      </form>
+
+      <!-- Comment list -->
+      <div id="commentList" class="mt-6"></div>
+    </section>
+
+    <!-- ============ SECTION H — NEWSLETTER CTA ============ -->
+    <section class="section newsletter">
+      <div class="container inner">
+        <svg class="wave" width="80" height="14" viewBox="0 0 80 14" fill="none" stroke="#FFD9A0" stroke-width="2"><path d="M2 7 Q 12 1, 22 7 T 42 7 T 62 7 T 78 7"/></svg>
+        <span class="kicker">Stay in the loop</span>
+        <h2>Don't miss the next story</h2>
+        <p>Monthly stories from the road. No spam — promise.</p>
+        <form class="news-form" id="newsForm" onsubmit="subscribe(event)">
+          <input type="email" id="newsEmail" placeholder="you@example.com" required aria-label="Email address" />
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <div class="news-msg" id="newsMsg" role="status"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile bottom action bar -->
+  <div class="mobile-actions" id="mobileActions" style="display:none;">
+    <button onclick="shareTwitter()" aria-label="Share">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+      Share
+    </button>
+    <button onclick="scrollToComments()" aria-label="Comment">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.6 8.6 0 0 1-4-1L3 20l1.5-5.5a8.5 8.5 0 1 1 16.5-3z"/></svg>
+      Comment
+    </button>
+    <button onclick="toggleBookmark()" aria-label="Bookmark">
+      <svg id="bookmarkIconM" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Save
+    </button>
+  </div>
+
+  <!-- ============ FOOTER (shared) ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">HIDDEN MALAYSIA</div>
+          <p class="footer-logo-tag">Six states. Endless stories.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="/about">About us</a><a href="/contact">Contact</a><a href="/contact">Submit a story</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Hidden Malaysia · A BIT21503 group project at UTHM</span>
+        <a href="/about">Sources &amp; Credits</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/post.js"></script>
+</body>
+</html>

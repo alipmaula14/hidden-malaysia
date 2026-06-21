@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings | Hidden Malaysia Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="admin-mobilebar">
+    <div class="admin-brand">HIDDEN MALAYSIA</div>
+    <button aria-label="Toggle menu" onclick="toggleAdminSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-brand">HIDDEN MALAYSIA<small>Admin Panel</small></div>
+      <nav class="admin-nav">
+        <a href="/admin" data-nav="/admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</a>
+        <a href="/admin/posts" data-nav="/admin/posts"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg> Posts</a>
+        <a href="/admin/comments" data-nav="/admin/comments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.6 8.6 0 0 1-4-1L3 20l1.5-5.5a8.5 8.5 0 1 1 16.5-3z"/></svg> Comments</a>
+        <a href="/admin/messages" data-nav="/admin/messages"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages <span class="nav-badge" id="navUnread" data-count="0"></span></a>
+        <a href="/admin/subscribers" data-nav="/admin/subscribers"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 4-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8"/></svg> Subscribers</a>
+        <a href="/admin/accommodations" data-nav="/admin/accommodations"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 18h18"/><path d="M7 10V8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg> Accommodations</a>
+        <a href="/admin/settings" data-nav="/admin/settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</a>
+      </nav>
+      <div class="admin-user">Logged in as <strong id="adminUserName">…</strong>
+        <button class="btn btn-sm mt-3" style="width:100%; justify-content:center; background:rgba(255,255,255,0.12); color:#fff;" onclick="logout()">Log out</button>
+      </div>
+    </aside>
+
+    <main class="admin-main" id="main" role="main">
+      <div class="admin-header"><div><h1 class="serif">Settings</h1><div class="caption">Site configuration</div></div></div>
+
+      <!-- Comment moderation -->
+      <div class="panel" style="max-width:680px;">
+        <h3 class="serif" style="font-size:1.15rem;">Comment moderation</h3>
+        <div class="flex items-center justify-between" style="margin:18px 0; gap:16px;">
+          <div>
+            <strong>Auto-moderate comments</strong>
+            <div class="text-muted" style="font-size:0.85rem;max-width:420px;">
+              When ON, suspicious comments are held as <em>Pending review</em> instead of
+              appearing instantly. Turn this OFF for live demos so comments post immediately.
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="autoModerate" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group" style="margin-top:18px;">
+          <label class="label" for="spamKeywords">Spam keywords <span class="text-muted" style="font-weight:400;">(comma-separated)</span></label>
+          <textarea class="input textarea" id="spamKeywords" rows="3" style="font-family:var(--font-body);"></textarea>
+        </div>
+
+        <button class="btn btn-primary" id="saveSettings">Save settings</button>
+        <div class="news-msg" id="settingsMsg" role="status" style="margin-top:10px;"></div>
+        <p class="text-muted" style="font-size:0.82rem; margin-top:14px;">
+          Tip: turn off auto-moderation for demos to show instant comment posting.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/admin-settings.js"></script>
+</body>
+</html>

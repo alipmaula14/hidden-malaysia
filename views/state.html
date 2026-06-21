@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore a State | Hidden Malaysia</title>
+  <meta name="description" content="A travel guide to underrated Malaysian states." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <style>
+    /* Page-specific helpers not in the shared sheet */
+    .breadcrumb { font-size: 0.85rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
+    .breadcrumb a:hover { color: #fff; text-decoration: underline; }
+    .state-fact { display: flex; flex-direction: column; gap: 4px; }
+    .state-fact dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .state-fact dd { font-weight: 600; }
+    .intro-grid { display: grid; grid-template-columns: 60% 40%; gap: 40px; align-items: start; }
+    .intro-text p { margin-bottom: 18px; font-size: 1.08rem; color: #333; }
+    .hscroll { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    @media (max-width: 1024px) { .intro-grid { grid-template-columns: 1fr; } .hscroll { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 640px) {
+      .hscroll { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 80%;
+                 overflow-x: auto; scroll-snap-type: x mandatory; }
+      .hscroll > * { scroll-snap-align: start; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============ NAVBAR (shared) ============ -->
+  <header class="navbar transparent" id="navbar">
+    <a href="/" class="logo">
+      <div class="logo-text">HIDDEN MALAYSIA</div>
+      <div class="logo-tag">Discover the gem hidden from the crowd</div>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/#explore" class="nav-link">Explore</a>
+      <div class="dropdown">
+        <a href="/#explore" class="nav-link">States ⌄</a>
+        <div class="dropdown-menu">
+          <a href="/state/perlis">Perlis</a>
+          <a href="/state/kedah">Kedah</a>
+          <a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a>
+          <a href="/state/negeri_sembilan">Negeri Sembilan</a>
+          <a href="/state/johor">Johor</a>
+        </div>
+      </div>
+      <a href="/blog" class="nav-link">Articles</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn search-trigger" aria-label="Open search" onclick="openSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <a href="/admin/login" class="btn-login">Login</a>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMobile(true)"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="backdrop" id="backdrop" onclick="toggleMobile(false)"></div>
+  <aside class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
+    <button class="mobile-close" aria-label="Close menu" onclick="toggleMobile(false)">&times;</button>
+    <a href="/state/perlis">Perlis</a>
+    <a href="/state/kedah">Kedah</a>
+    <a href="/state/perak">Perak</a>
+    <a href="/state/pahang">Pahang</a>
+    <a href="/state/negeri_sembilan">Negeri Sembilan</a>
+    <a href="/state/johor">Johor</a>
+    <a href="/blog">Articles</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/admin/login">Login</a>
+  </aside>
+
+  <!-- ============ SEARCH OVERLAY (shared) ============ -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" aria-label="Close search" onclick="closeSearch()">&times;</button>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search hidden gems, states, stories…" aria-label="Search" oninput="onSearchInput()" />
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <p class="search-hint" id="searchHint">Try “cave”, “waterfall”, “Ipoh” or “market”.</p>
+    </div>
+  </div>
+
+  <main id="main" role="main">
+    <!-- ============ SECTION A — STATE HERO ============ -->
+    <section class="state-hero">
+      <img class="state-hero__image" id="heroImg" src="" alt="" />
+      <div class="state-hero__overlay"></div>
+      <div class="state-hero__content">
+        <div class="container">
+          <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb"></nav>
+          <h1 class="state-hero__title italic" id="stateName">State</h1>
+          <p class="state-hero__tagline" id="stateTagline"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION B — INTRO + QUICK FACTS ============ -->
+    <section class="section container">
+      <div class="intro-grid">
+        <div class="intro-text" id="introText" data-aos="fade-up"></div>
+        <div data-aos="fade-up" data-aos-delay="100">
+          <dl class="state-facts" id="stateFacts" style="grid-template-columns:1fr 1fr;"></dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION C — HIDDEN GEMS ============ -->
+    <section class="section container" id="gemsSection">
+      <span class="kicker">Places most travellers miss</span>
+      <h2 class="serif mt-2">Hidden Gems</h2>
+      <div class="grid grid-3 mt-5" id="gemsGrid"></div>
+    </section>
+
+    <!-- ============ SECTION D — WILD & WONDERFUL ============ -->
+    <section class="section section--sand" id="wildSection" style="display:none;">
+      <div class="container">
+        <span class="kicker">Nature, adventure, the outdoors</span>
+        <h2 class="serif mt-2">Wild &amp; Wonderful</h2>
+        <div class="hscroll mt-5" id="wildGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION E — FOOD, HISTORY, PEOPLE ============ -->
+    <section class="section container" id="cultureSection" style="display:none;">
+      <span class="kicker">Culture you can taste</span>
+      <h2 class="serif mt-2">Food, History, People</h2>
+      <div class="grid grid-3 mt-5" id="cultureGrid"></div>
+    </section>
+
+    <!-- ============ SECTION F — ALL STORIES ============ -->
+    <section class="section section--sand">
+      <div class="container">
+        <h2 class="serif" id="allHeading">All stories</h2>
+        <div class="filter-row mt-4" id="filterRow">
+          <button class="pill active" data-cat="">All</button>
+          <button class="pill" data-cat="hidden-gem">Hidden Gem</button>
+          <button class="pill" data-cat="nature">Nature</button>
+          <button class="pill" data-cat="culture">Culture</button>
+          <button class="pill" data-cat="food">Food</button>
+          <button class="pill" data-cat="adventure">Adventure</button>
+        </div>
+        <div class="grid grid-3" id="allGrid"></div>
+        <div class="load-more-wrap">
+          <button class="btn btn-outline" id="loadMoreBtn" onclick="loadMore()">Load more stories</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION G — OTHER STATES ============ -->
+    <section class="section container">
+      <span class="kicker">Keep exploring</span>
+      <h2 class="serif mt-2">Explore other states</h2>
+      <div class="grid grid-3 mt-5" id="otherStates"></div>
+    </section>
+
+    <!-- ============ SECTION H — MORE STORIES FROM ACROSS MALAYSIA (Feature 2) ============ -->
+    <section class="section section--sand">
+      <div class="container">
+        <div class="eyebrow">Cross-country</div>
+        <h2 class="serif mt-2">More stories from across Malaysia</h2>
+        <p class="section-caption">Wherever you go next, take a story with you.</p>
+        <div class="scroll-row mt-5" id="cross-country-row"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER (shared) ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">HIDDEN MALAYSIA</div>
+          <p class="footer-logo-tag">Six states. Endless stories.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a>
+        </div>
+        <div class="footer-col">
+          <h5>About</h5>
+          <a href="/about">About us</a><a href="/contact">Contact</a><a href="/contact">Submit a story</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Hidden Malaysia · A BIT21503 group project at UTHM</span>
+        <a href="/about">Sources &amp; Credits</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/state.js"></script>
+</body>
+</html>

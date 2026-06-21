@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Stories | Hidden Malaysia</title>
+  <meta name="description" content="Search and filter every hidden gem from six underrated Malaysian states." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <style>
+    /* Page-specific helpers */
+    .blog-hero { min-height: 40vh; display: flex; align-items: center; text-align: center;
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: #fff; padding: 110px 20px 50px; }
+    .blog-hero h1 { color: #fff; }
+    .blog-hero p { color: rgba(255,255,255,0.85); max-width: 540px; margin: 12px auto 22px; }
+    .blog-search { max-width: 520px; margin: 0 auto; display: flex; align-items: center; gap: 10px;
+      background: #fff; border-radius: var(--radius-full); padding: 6px 6px 6px 18px; box-shadow: var(--shadow-md); }
+    .blog-search input { flex: 1; border: none; outline: none; font: inherit; font-size: 1rem; background: none; color: var(--text-dark); }
+    .filter-bar { position: sticky; top: 0; z-index: 80; background: var(--sand); padding: 16px 0; transition: box-shadow .2s, background .2s; }
+    .filter-bar.stuck { background: #fff; box-shadow: var(--shadow-sm); }
+    .filter-bar .label-sm { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; }
+    .results-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+    .sort-select { padding: 8px 12px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font: inherit; background: #fff; }
+    .clear-btn { color: var(--terracotta); font-weight: 600; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============ NAVBAR (shared) ============ -->
+  <header class="navbar transparent" id="navbar">
+    <a href="/" class="logo"><div class="logo-text">HIDDEN MALAYSIA</div><div class="logo-tag">Discover the gem hidden from the crowd</div></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/#explore" class="nav-link">Explore</a>
+      <div class="dropdown">
+        <a href="/#explore" class="nav-link">States ⌄</a>
+        <div class="dropdown-menu">
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a>
+        </div>
+      </div>
+      <a href="/blog" class="nav-link">Articles</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn search-trigger" aria-label="Open search" onclick="openSearch()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <a href="/admin/login" class="btn-login">Login</a>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMobile(true)"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="backdrop" id="backdrop" onclick="toggleMobile(false)"></div>
+  <aside class="mobile-panel" id="mobilePanel" aria-label="Mobile menu">
+    <button class="mobile-close" aria-label="Close menu" onclick="toggleMobile(false)">&times;</button>
+    <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+    <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a>
+    <a href="/blog">Articles</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/admin/login">Login</a>
+  </aside>
+
+  <!-- ============ SEARCH OVERLAY (shared) ============ -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" aria-label="Close search" onclick="closeSearch()">&times;</button>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search hidden gems, states, stories…" aria-label="Search" oninput="onSearchInput()" />
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <p class="search-hint" id="searchHint">Try “cave”, “waterfall”, “Ipoh” or “market”.</p>
+    </div>
+  </div>
+
+  <main id="main" role="main">
+    <!-- ============ A — COMPACT HERO ============ -->
+    <section class="blog-hero">
+      <div class="container">
+        <span class="kicker" style="color:#FFD9A0;">All stories</span>
+        <h1 class="mt-2">Every hidden gem, one place.</h1>
+        <p>Search, filter, and discover stories from all six states.</p>
+        <div class="blog-search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="blogSearch" placeholder="Search by place, food, theme…" aria-label="Search stories" />
+          <button class="btn btn-primary btn-sm" onclick="applySearch()">Search</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ B — STICKY FILTER BAR ============ -->
+    <div class="filter-bar" id="filterBar">
+      <div class="container">
+        <div class="label-sm">Filter by state</div>
+        <div class="filter-row" id="statePills">
+          <button class="pill active" data-state="all">All States</button>
+          <button class="pill" data-state="perlis">Perlis</button>
+          <button class="pill" data-state="kedah">Kedah</button>
+          <button class="pill" data-state="perak">Perak</button>
+          <button class="pill" data-state="pahang">Pahang</button>
+          <button class="pill" data-state="negeri_sembilan">Negeri Sembilan</button>
+          <button class="pill" data-state="johor">Johor</button>
+        </div>
+        <div class="label-sm mt-2">Filter by category</div>
+        <div class="filter-row" id="catPills">
+          <button class="pill active" data-cat="all">All Categories</button>
+          <button class="pill" data-cat="hidden-gem">Hidden Gem</button>
+          <button class="pill" data-cat="nature">Nature</button>
+          <button class="pill" data-cat="culture">Culture</button>
+          <button class="pill" data-cat="food">Food</button>
+          <button class="pill" data-cat="adventure">Adventure</button>
+        </div>
+        <div class="results-row">
+          <div class="flex items-center gap-4">
+            <span id="resultsCount" class="text-muted" style="font-size:0.9rem;">Loading…</span>
+            <button class="clear-btn" id="clearBtn" style="display:none;" onclick="clearFilters()">Clear all filters ✕</button>
+          </div>
+          <label class="flex items-center gap-2" style="font-size:0.85rem;">
+            <span class="text-muted">Sort</span>
+            <select class="sort-select" id="sortSelect" onchange="applySort()">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="az">A – Z</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ C — ARTICLE GRID ============ -->
+    <section class="section container" id="resultsTop" style="padding-top:30px;">
+      <div class="grid grid-3" id="grid"></div>
+      <!-- D — Load more -->
+      <div class="load-more-wrap">
+        <button class="btn btn-outline" id="loadMoreBtn" onclick="loadMore()">Load more stories</button>
+      </div>
+    </section>
+
+    <!-- ============ E — NEWSLETTER ============ -->
+    <section class="section newsletter">
+      <div class="container inner">
+        <svg class="wave" width="80" height="14" viewBox="0 0 80 14" fill="none" stroke="#FFD9A0" stroke-width="2"><path d="M2 7 Q 12 1, 22 7 T 42 7 T 62 7 T 78 7"/></svg>
+        <span class="kicker">Stay in the loop</span>
+        <h2>Get hidden Malaysia in your inbox</h2>
+        <p>Monthly stories from the road. No spam — promise.</p>
+        <form class="news-form" id="newsForm" onsubmit="subscribe(event)">
+          <input type="email" id="newsEmail" placeholder="you@example.com" required aria-label="Email address" />
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <div class="news-msg" id="newsMsg" role="status"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER (shared) ============ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><div class="footer-logo">HIDDEN MALAYSIA</div><p class="footer-logo-tag">Six states. Endless stories.</p></div>
+        <div class="footer-col"><h5>Explore</h5>
+          <a href="/state/perlis">Perlis</a><a href="/state/kedah">Kedah</a><a href="/state/perak">Perak</a>
+          <a href="/state/pahang">Pahang</a><a href="/state/negeri_sembilan">Negeri Sembilan</a><a href="/state/johor">Johor</a></div>
+        <div class="footer-col"><h5>About</h5><a href="/about">About us</a><a href="/contact">Contact</a><a href="/contact">Submit a story</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Hidden Malaysia · A BIT21503 group project at UTHM</span><a href="/about">Sources &amp; Credits</a></div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/blog.js"></script>
+</body>
+</html>

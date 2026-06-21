@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post Editor | Hidden Malaysia Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="admin-mobilebar">
+    <div class="admin-brand">HIDDEN MALAYSIA</div>
+    <button aria-label="Toggle menu" onclick="toggleAdminSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-brand">HIDDEN MALAYSIA<small>Admin Panel</small></div>
+      <nav class="admin-nav">
+        <a href="/admin" data-nav="/admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</a>
+        <a href="/admin/posts" data-nav="/admin/posts"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg> Posts</a>
+        <a href="/admin/comments" data-nav="/admin/comments"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.6 8.6 0 0 1-4-1L3 20l1.5-5.5a8.5 8.5 0 1 1 16.5-3z"/></svg> Comments</a>
+        <a href="/admin/messages" data-nav="/admin/messages"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages <span class="nav-badge" id="navUnread" data-count="0"></span></a>
+        <a href="/admin/subscribers" data-nav="/admin/subscribers"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 4-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8"/></svg> Subscribers</a>
+        <a href="/admin/accommodations" data-nav="/admin/accommodations"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 18h18"/><path d="M7 10V8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg> Accommodations</a>
+        <a href="/admin/settings" data-nav="/admin/settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</a>
+      </nav>
+      <div class="admin-user">Logged in as <strong id="adminUserName">…</strong>
+        <button class="btn btn-sm mt-3" style="width:100%; justify-content:center; background:rgba(255,255,255,0.12); color:#fff;" onclick="logout()">Log out</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Top bar -->
+      <div class="admin-header">
+        <div>
+          <a href="/admin/posts" class="text-terracotta" style="font-size:0.85rem;">← Back to posts</a>
+          <h1 class="serif" id="editorMode" style="font-size:1.5rem; margin-top:4px;">New Post</h1>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn btn-outline btn-sm" id="saveDraftBtn" onclick="save(false)">Save Draft</button>
+          <button class="btn btn-primary btn-sm" id="publishBtn" onclick="save(true)">Publish</button>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <!-- LEFT: editor -->
+        <div>
+          <input class="editor-title" id="title" placeholder="Post title…" />
+          <div class="slug-row">/post/<input id="slug" placeholder="auto-generated-slug" /></div>
+
+          <div class="form-group">
+            <label class="label" for="excerpt">Excerpt</label>
+            <textarea class="input textarea" id="excerpt" maxlength="300" style="min-height:80px;"></textarea>
+            <div class="char-counter" style="font-size:0.78rem;color:var(--text-muted);text-align:right;"><span id="excerptCount">0</span>/300 · Shown in card previews and search</div>
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="cover">Cover image</label>
+            <input class="input" id="cover" placeholder="https://… (Unsplash, Wikimedia, /images/posts/…)" />
+            <small class="text-muted">Paste an image URL or local path.</small>
+            <img class="cover-preview" id="coverPreview" alt="cover preview" style="display:none; max-width:280px;" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="content">Content</label>
+            <textarea class="input textarea" id="content" style="min-height:420px;"></textarea>
+            <small class="text-muted"><span id="wordCount">0 words · 0 min read</span> · Paragraphs separated by a blank line.</small>
+          </div>
+        </div>
+
+        <!-- RIGHT: settings -->
+        <div>
+          <div class="settings-panel">
+            <h4>Status</h4>
+            <label class="flex items-center gap-3" style="cursor:pointer;">
+              <span class="switch"><input type="checkbox" id="published" /><span class="slider"></span></span>
+              <span id="statusLabel">Draft</span>
+            </label>
+            <div class="text-muted mt-3" id="editDate" style="font-size:0.8rem;"></div>
+          </div>
+
+          <div class="settings-panel">
+            <h4>Taxonomy</h4>
+            <div class="form-group">
+              <label class="label" for="state">State *</label>
+              <select class="input" id="state">
+                <option value="">Select…</option>
+                <option value="perlis">Perlis</option><option value="kedah">Kedah</option><option value="perak">Perak</option>
+                <option value="pahang">Pahang</option><option value="negeri_sembilan">Negeri Sembilan</option><option value="johor">Johor</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="label" for="category">Category *</label>
+              <select class="input" id="category">
+                <option value="">Select…</option>
+                <option value="hidden-gem">Hidden Gem</option><option value="nature">Nature</option><option value="culture">Culture</option>
+                <option value="food">Food</option><option value="adventure">Adventure</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-panel">
+            <h4>Tags</h4>
+            <input class="input" id="tags" placeholder="cave, nature, perak…" />
+            <div class="tag-input-pills" id="tagPills"></div>
+          </div>
+
+          <div class="settings-panel">
+            <h4>Source attribution</h4>
+            <div class="form-group">
+              <label class="label" for="source">Source URL</label>
+              <input class="input" id="source" placeholder="https://…" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="label" for="credit">Image credit</label>
+              <input class="input" id="credit" placeholder="Photo by …, CC BY-SA 4.0" />
+              <small class="text-muted">Optional — recommended for copyright compliance.</small>
+            </div>
+          </div>
+
+          <div class="settings-panel" id="accomPanel">
+            <h4>Nearby accommodations</h4>
+            <div id="accomList"><p class="text-muted" style="font-size:0.82rem;">Save the post first to add accommodations.</p></div>
+            <button type="button" class="btn btn-outline btn-sm mt-3" id="addAccomBtn" style="width:100%; display:none;" onclick="toggleAccomForm()">+ Add accommodation</button>
+            <div id="accomForm" style="display:none; margin-top:12px; border-top:1px solid var(--border-light); padding-top:12px;">
+              <input class="input mb-2" id="acName" placeholder="Name *" />
+              <select class="input mb-2" id="acType">
+                <option value="hotel">Hotel</option><option value="homestay">Homestay</option><option value="resort">Resort</option>
+                <option value="budget">Budget</option><option value="hostel">Hostel</option><option value="chalet">Chalet</option>
+              </select>
+              <div class="flex gap-2 mb-2">
+                <input class="input" id="acDist" placeholder="Distance (km)" type="number" step="0.1" />
+                <select class="input" id="acPrice"><option>$</option><option selected>$$</option><option>$$$</option><option>$$$$</option></select>
+              </div>
+              <input class="input mb-2" id="acRating" placeholder="Rating 0–5" type="number" step="0.1" min="0" max="5" />
+              <input class="input mb-2" id="acBooking" placeholder="Booking URL" />
+              <input class="input mb-2" id="acImage" placeholder="Image URL" />
+              <textarea class="input mb-2" id="acDesc" placeholder="Short description" style="min-height:56px;"></textarea>
+              <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAccom()">Save accommodation</button>
+            </div>
+          </div>
+
+          <div class="settings-panel">
+            <h4>Search preview</h4>
+            <div class="seo-preview">
+              <div class="seo-title" id="seoTitle">Post title</div>
+              <div class="seo-url" id="seoUrl">hiddenmalaysia.my/post/slug</div>
+              <div class="seo-desc" id="seoDesc">Excerpt preview…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/helpers.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/admin-post-editor.js"></script>
+</body>
+</html>
