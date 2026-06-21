@@ -13,12 +13,12 @@ function logLimit(type, req) {
 
 // ----------------------------------------------------------------
 // 1. Global API limiter
-//    100 requests per 15 minutes per IP.
+//    400 requests per 15 minutes per IP (temporarily raised for demo).
 //    Admin sessions are exempt so the admin panel never gets blocked.
 // ----------------------------------------------------------------
 const globalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 400,
   standardHeaders: true,
   legacyHeaders: true,
   skip: (req) => !!(req.session && req.session.user && req.session.user.role === 'admin'),
