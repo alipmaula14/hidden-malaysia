@@ -109,8 +109,8 @@ router.get('/all', isAdmin, async (req, res) => {
        FROM comments c JOIN posts p ON c.post_id = p.id
        ${where}
        ORDER BY c.created_at ${order}
-       LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+       LIMIT ${pageSize} OFFSET ${offset}`,
+      params
     );
 
     const formatted = rows.map(r => ({ ...r, created_at: formatDate(r.created_at) }));

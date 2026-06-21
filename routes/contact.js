@@ -111,8 +111,8 @@ router.get('/', isAdmin, async (req, res) => {
       `SELECT id, name, email, subject, message, status, ip_address, created_at
        FROM contact_messages ${where}
        ORDER BY created_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+       LIMIT ${pageSize} OFFSET ${offset}`,
+      params
     );
 
     res.json({

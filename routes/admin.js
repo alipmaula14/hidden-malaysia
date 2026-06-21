@@ -78,8 +78,8 @@ router.get('/search-log', async (req, res) => {
       `SELECT id, query, results_count, searched_at
        FROM search_log ${where}
        ORDER BY searched_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+       LIMIT ${pageSize} OFFSET ${offset}`,
+      params
     );
 
     res.json({ success: true, data: rows, total, page: pageNum, totalPages: Math.ceil(total / pageSize) });

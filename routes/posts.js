@@ -71,8 +71,9 @@ router.get('/', searchLimiter, async (req, res) => {
 
     // Random mode (Feature 2): shuffle and skip paging; ordered mode otherwise.
     const orderClause = isRandom ? 'ORDER BY RAND()' : 'ORDER BY p.created_at DESC';
-    const pageClause  = isRandom ? 'LIMIT ?' : 'LIMIT ? OFFSET ?';
-    const pageParams  = isRandom ? [pageSize] : [pageSize, offset];
+    // pageSize and offset are integers (bounded above) — safe to interpolate directly.
+    // mysql2 prepared statements reject LIMIT/OFFSET as bound parameters (ER_WRONG_ARGUMENTS).
+    const pageClause = isRandom ? `LIMIT ${pageSize}` : `LIMIT ${pageSize} OFFSET ${offset}`;
 
     const [posts] = await pool.execute(
       `SELECT p.id, p.title, p.slug, p.excerpt, p.state, p.category,
@@ -83,7 +84,7 @@ router.get('/', searchLimiter, async (req, res) => {
        WHERE ${where}
        ${orderClause}
        ${pageClause}`,
-      [...params, ...pageParams]
+      params
     );
 
     // Feature 5 — Search analytics: log real visitor searches (fire-and-forget).
@@ -170,8 +171,8 @@ router.get('/all', isAdmin, async (req, res) => {
        LEFT JOIN users u ON p.author_id = u.id
        ${where}
        ORDER BY p.created_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, pageSize, offset]
+       LIMIT ${pageSize} OFFSET ${offset}`,
+      params
     );
 
     res.json({ success: true, data: posts, total, page: pageNum, totalPages: Math.ceil(total / pageSize) });
