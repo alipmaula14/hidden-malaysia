@@ -86,21 +86,6 @@ npm run dev
 
 Admin login after seeding: **username:** `admin` **password:** `Admin@123`
 
----
-
-## Deployment
-
-Deployed on [Railway](https://railway.app) — a Node.js web service plus a managed MySQL plugin in the same project, connected over Railway's internal network (`mysql.railway.internal`).
-
-Summary of the setup:
-1. Push to GitHub, connect the repo as a Railway service
-2. Add a MySQL plugin to the project — Railway auto-injects `MYSQLHOST`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQLPORT` into the web service
-3. Set `NODE_ENV=production`, `SESSION_SECRET`, and `SITE_URL` manually in the service's Variables tab
-4. Generate a public domain under Settings → Networking
-5. Run `node scripts/init-db.js` once via Railway's Console tab to create and seed all tables
-6. Push-to-deploy from `main` from then on
-
-`config/db.js` is written to prefer the Railway-injected `MYSQL*` variables whenever present, falling back to local `DB_*` variables otherwise — so the same codebase runs unmodified in both environments.
 
 ---
 
