@@ -24,24 +24,31 @@ const { spawnSync } = require('child_process');
 const path       = require('path');
 
 // ------------------------------------------------------------------
-// Map Railway MYSQL* vars → DB_* vars so the existing seed scripts
-// (which read DB_HOST etc.) work without modification on Railway.
+// Explicit Railway vs local branch — same logic as config/db.js.
+// Also map MYSQL* → DB_* so the child seed scripts pick up the right
+// values when spawned (they read DB_HOST etc. from process.env).
 // ------------------------------------------------------------------
-if (process.env.MYSQLHOST     && !process.env.DB_HOST) process.env.DB_HOST = process.env.MYSQLHOST;
-if (process.env.MYSQLPORT     && !process.env.DB_PORT) process.env.DB_PORT = process.env.MYSQLPORT;
-if (process.env.MYSQLUSER     && !process.env.DB_USER) process.env.DB_USER = process.env.MYSQLUSER;
-if (process.env.MYSQLPASSWORD && !process.env.DB_PASS) process.env.DB_PASS = process.env.MYSQLPASSWORD;
-if (process.env.MYSQLDATABASE && !process.env.DB_NAME) process.env.DB_NAME = process.env.MYSQLDATABASE;
+const isRailway = !!process.env.MYSQLHOST;
+
+if (isRailway) {
+  process.env.DB_HOST = process.env.MYSQLHOST;
+  process.env.DB_PORT = process.env.MYSQLPORT || '3306';
+  process.env.DB_USER = process.env.MYSQLUSER;
+  process.env.DB_PASS = process.env.MYSQLPASSWORD;
+  process.env.DB_NAME = process.env.MYSQLDATABASE;
+}
 
 const DB_CONFIG = {
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     Number(process.env.DB_PORT || 3306),
-  user:     process.env.DB_USER     || 'root',
-  password: process.env.DB_PASS     || '',
-  multipleStatements: true
+  host:     isRailway ? process.env.MYSQLHOST      : (process.env.DB_HOST || 'localhost'),
+  port:     Number(isRailway ? process.env.MYSQLPORT : (process.env.DB_PORT || 3306)),
+  user:     isRailway ? process.env.MYSQLUSER      : (process.env.DB_USER || 'root'),
+  password: isRailway ? process.env.MYSQLPASSWORD  : (process.env.DB_PASS || ''),
+  multipleStatements: true,
 };
 
-const DB_NAME = process.env.DB_NAME || 'hidden_malaysia';
+const DB_NAME = isRailway
+  ? process.env.MYSQLDATABASE
+  : (process.env.DB_NAME || 'hidden_malaysia');
 
 // ------------------------------------------------------------------
 // All CREATE TABLE statements — combines schema.sql, shot8-schema.sql,
@@ -142,23 +149,29 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Indexes (IF NOT EXISTS requires MySQL 8.0.16+; safe to run on Railway)
-CREATE INDEX IF NOT EXISTS idx_posts_state     ON posts(state);
-CREATE INDEX IF NOT EXISTS idx_posts_slug      ON posts(slug);
-CREATE INDEX IF NOT EXISTS idx_posts_published ON posts(published);
-CREATE INDEX IF NOT EXISTS idx_comments_post   ON comments(post_id);
-CREATE INDEX IF NOT EXISTS idx_comments_status ON comments(status);
-CREATE INDEX IF NOT EXISTS idx_contact_status  ON contact_messages(status);
-CREATE INDEX IF NOT EXISTS idx_contact_created ON contact_messages(created_at);
-CREATE INDEX IF NOT EXISTS idx_accom_post      ON accommodations(post_id);
-CREATE INDEX IF NOT EXISTS idx_query           ON search_log(query);
-CREATE INDEX IF NOT EXISTS idx_date            ON search_log(searched_at);
-
 INSERT INTO site_settings (setting_key, setting_value) VALUES
   ('auto_moderate_comments', 'false'),
   ('comment_spam_keywords',  'viagra,casino,lottery,bitcoin,crypto,forex,investment opportunity,click here,free money,nude,porn')
 ON DUPLICATE KEY UPDATE setting_key = setting_key;
 `;
+
+// ------------------------------------------------------------------
+// Indexes — created separately so each one can be skipped gracefully
+// if it already exists (MySQL errno 1061 / ER_DUP_KEYNAME).
+// MySQL does not support CREATE INDEX IF NOT EXISTS — that is PostgreSQL.
+// ------------------------------------------------------------------
+const INDEXES = [
+  'CREATE INDEX idx_posts_state     ON posts(state)',
+  'CREATE INDEX idx_posts_slug      ON posts(slug)',
+  'CREATE INDEX idx_posts_published ON posts(published)',
+  'CREATE INDEX idx_comments_post   ON comments(post_id)',
+  'CREATE INDEX idx_comments_status ON comments(status)',
+  'CREATE INDEX idx_contact_status  ON contact_messages(status)',
+  'CREATE INDEX idx_contact_created ON contact_messages(created_at)',
+  'CREATE INDEX idx_accom_post      ON accommodations(post_id)',
+  'CREATE INDEX idx_search_query    ON search_log(query)',
+  'CREATE INDEX idx_search_date     ON search_log(searched_at)',
+];
 
 // ------------------------------------------------------------------
 // Helper: spawn a Node script, inherit stdio so progress is visible
@@ -187,6 +200,7 @@ async function main() {
     console.log('============================================================');
     console.log(' Hidden Malaysia — Database Initialiser');
     console.log('============================================================');
+    console.log(`Mode     : ${isRailway ? 'Railway MySQL' : 'Local MySQL'}`);
     console.log(`Host     : ${DB_CONFIG.host}:${DB_CONFIG.port}`);
     console.log(`Database : ${DB_NAME}`);
     console.log('------------------------------------------------------------\n');
@@ -194,8 +208,23 @@ async function main() {
     console.log('Step 1/3 — Creating database and tables...');
     conn = await mysql.createConnection(DB_CONFIG);
     await conn.query(SCHEMA_SQL);
+
+    // Create indexes one at a time; silently skip any that already exist
+    let idxCreated = 0;
+    let idxSkipped = 0;
+    for (const sql of INDEXES) {
+      try {
+        await conn.query(sql);
+        idxCreated++;
+      } catch (err) {
+        if (err.errno === 1061) { idxSkipped++; continue; } // ER_DUP_KEYNAME
+        throw err;
+      }
+    }
+
     await conn.end();
-    console.log('✓  All tables created (or already existed).\n');
+    conn = null;
+    console.log(`✓  Tables ready. Indexes: ${idxCreated} created, ${idxSkipped} already existed.\n`);
 
     console.log('Step 2/3 — Seeding users, main posts, comments, subscribers...');
     runScript(path.join(__dirname, '../database/seed.js'));

@@ -150,16 +150,16 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- Indexes
 -- IF NOT EXISTS requires MySQL 8.0.16+ (Railway ships 8.0+).
 -- ============================================================
-CREATE INDEX IF NOT EXISTS idx_posts_state     ON posts(state);
-CREATE INDEX IF NOT EXISTS idx_posts_slug      ON posts(slug);
-CREATE INDEX IF NOT EXISTS idx_posts_published ON posts(published);
-CREATE INDEX IF NOT EXISTS idx_comments_post   ON comments(post_id);
-CREATE INDEX IF NOT EXISTS idx_comments_status ON comments(status);
-CREATE INDEX IF NOT EXISTS idx_accom_post      ON accommodations(post_id);
-CREATE INDEX IF NOT EXISTS idx_contact_status  ON contact_messages(status);
-CREATE INDEX IF NOT EXISTS idx_contact_created ON contact_messages(created_at);
-CREATE INDEX IF NOT EXISTS idx_search_query    ON search_log(query);
-CREATE INDEX IF NOT EXISTS idx_search_date     ON search_log(searched_at);
+CREATE INDEX idx_posts_state     ON posts(state);
+CREATE INDEX idx_posts_slug      ON posts(slug);
+CREATE INDEX idx_posts_published ON posts(published);
+CREATE INDEX idx_comments_post   ON comments(post_id);
+CREATE INDEX idx_comments_status ON comments(status);
+CREATE INDEX idx_accom_post      ON accommodations(post_id);
+CREATE INDEX idx_contact_status  ON contact_messages(status);
+CREATE INDEX idx_contact_created ON contact_messages(created_at);
+CREATE INDEX idx_search_query    ON search_log(query);
+CREATE INDEX idx_search_date     ON search_log(searched_at);
 
 -- ============================================================
 -- Default site_settings rows
