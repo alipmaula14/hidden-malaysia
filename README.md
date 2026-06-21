@@ -1,36 +1,56 @@
 # Hidden Malaysia
 
-A travel blog showcasing underrated destinations across six Malaysian states — Perlis, Kedah, Perak, Pahang, Negeri Sembilan, and Johor.
+> *Discover the gem hidden from the crowd.*
 
-**Live URL:** _[will be added after deployment]_
+A full-stack travel blog built around an interactive map of Peninsular Malaysia, surfacing underrated destinations across six often-overlooked states — Perlis, Kedah, Perak, Pahang, Negeri Sembilan, and Johor. Built as a university web development project, designed and shipped like a real product: live deployment, a working admin CMS, rate-limited APIs, and 36 original travel narratives written in a first-person editorial voice rather than generic listicle copy.
+
+**Live site:** _[add your Railway URL here]_
+**Admin demo:** `/admin/login` — credentials in [Local Setup](#local-setup) below
+
+---
+
+## Why this exists
+
+Malaysian travel content online is dominated by the same handful of destinations. Hidden Malaysia intentionally narrows its focus to six states that rarely make the front page of a travel guide, and pairs that editorial angle with a piece of UI most student projects skip entirely: a hand-built, clickable SVG map of the peninsula as the actual navigation system, not just a decoration.
+
+---
+
+## Highlights
+
+- **Interactive SVG map** — real Mercator-projected state geometry (not placeholder shapes), click-to-explore navigation as the homepage's primary interaction
+- **36 original articles** across 6 states, written in first-person travel-editorial voice with academic-integrity safeguards (no fabricated names, prices, or dates — every factual claim traced to a cited source)
+- **Full admin CMS** — dashboard, post editor with live SEO preview and auto-slug generation, comment moderation queue, contact inbox, subscriber list, search analytics, site settings
+- **Public CRUD** — visitors can comment and like comments (with rate limiting and spam heuristics), subscribe to a newsletter, and submit contact messages
+- **Nearby accommodations** — linked per-post recommendations, manageable from the admin panel
+- **Defense-in-depth rate limiting** — separate tiers for general API traffic, search, and login brute-force protection, with a bot-UA guard and admin-session exemption
+- **Dark mode, reading progress bar, recently-viewed history** — all via CSS custom properties and `localStorage`, no extra dependencies
+- **Accessibility-first** — skip links, ARIA labelling, keyboard-navigable modals, `prefers-reduced-motion` support, targeting WCAG 2.1 AA
+- **Zero build step** — vanilla HTML/CSS/JS frontend, no bundler, no framework lock-in
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Runtime | Node.js 18+ |
-| Framework | Express 4 |
-| Database | MySQL 8 (mysql2/promise pool) |
-| Auth | express-session + bcryptjs |
-| Rate limiting | express-rate-limit |
-| Frontend | Vanilla HTML/CSS/JS (no build step) |
-| Hosting | Railway |
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Runtime | Node.js 18+ | |
+| Framework | Express 4 | |
+| Database | MySQL 8 | via `mysql2/promise` connection pool |
+| Auth | `express-session` + `bcryptjs` | Session-based admin auth, hashed passwords |
+| Security | `express-rate-limit`, parameterised queries, input sanitisation | See [Security](#security) below |
+| Frontend | Vanilla HTML / CSS / JS | No build tooling, AOS for scroll animation |
+| Hosting | Railway | Web service + managed MySQL plugin, internal network connection |
 
 ---
 
-## Features
+## Security
 
-- Six Malaysian states with dedicated state pages
-- 36 blog posts (18 main + 18 hidden gems) with rich content
-- Full-text search with analytics logging
-- Comment system with moderation and spam filtering
-- Newsletter subscriber management
-- Contact form (rate-limited)
-- Nearby accommodation recommendations per post
-- Admin panel (dashboard, post editor, comment moderation, settings, search log)
-- Rate limiting and bot guard on all API endpoints
+- **SQL injection** — every query uses parameterised statements (`?` placeholders) via `mysql2`. Pagination (`LIMIT`/`OFFSET`) is the one deliberate exception: those values are `parseInt()`-validated and bounds-checked in JavaScript before being interpolated, working around a known `mysql2` prepared-statement limitation, without reopening injection risk.
+- **XSS** — all user-submitted text (comments, contact form, post content) is HTML-stripped server-side before storage.
+- **Password storage** — `bcryptjs` hashing, never plaintext.
+- **Rate limiting** — tiered limits per endpoint type (global API, search, login), with `skipSuccessfulRequests` on login so legitimate users are never penalised, and an admin-session bypass on the global limiter.
+- **Session security** — `httpOnly` cookies, `secure` flag in production, environment-driven CORS locked to the deployed domain.
+- **Secrets management** — all credentials via environment variables, `.env` excluded from version control (`.env.example` provided as a template).
 
 ---
 
@@ -68,17 +88,19 @@ Admin login after seeding: **username:** `admin` **password:** `Admin@123`
 
 ---
 
-## Deployment (Railway)
+## Deployment
 
-See [RAILWAY-DEPLOY.md](RAILWAY-DEPLOY.md) for the full step-by-step guide.
+Deployed on [Railway](https://railway.app) — a Node.js web service plus a managed MySQL plugin in the same project, connected over Railway's internal network (`mysql.railway.internal`).
 
-Quick summary:
-1. Push this repo to GitHub
-2. Create a Railway project and link the repo
-3. Add a MySQL plugin to the project
-4. Set `NODE_ENV=production`, `SESSION_SECRET`, and `SITE_URL` in Railway variables
-5. Deploy — Railway runs `npm start` automatically
-6. Open a Railway shell and run `node scripts/init-db.js` once
+Summary of the setup:
+1. Push to GitHub, connect the repo as a Railway service
+2. Add a MySQL plugin to the project — Railway auto-injects `MYSQLHOST`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQLPORT` into the web service
+3. Set `NODE_ENV=production`, `SESSION_SECRET`, and `SITE_URL` manually in the service's Variables tab
+4. Generate a public domain under Settings → Networking
+5. Run `node scripts/init-db.js` once via Railway's Console tab to create and seed all tables
+6. Push-to-deploy from `main` from then on
+
+`config/db.js` is written to prefer the Railway-injected `MYSQL*` variables whenever present, falling back to local `DB_*` variables otherwise — so the same codebase runs unmodified in both environments.
 
 ---
 
@@ -121,7 +143,6 @@ hidden-malaysia/
 ├── .env.example
 ├── .gitignore
 ├── package.json
-├── RAILWAY-DEPLOY.md
 └── server.js
 ```
 
@@ -151,3 +172,9 @@ hidden-malaysia/
 ## License
 
 MIT — free to use for academic and personal projects.
+
+---
+
+## About this project
+
+Built for **BIT21503 Web Development**, Universiti Tun Hussein Onn Malaysia (UTHM). All article content is original first-person travel writing, factually grounded in cited sources (Tripadvisor, Wikipedia, Wikimedia Commons, and local travel publications) and disclosed as a composite editorial voice rather than a literal personal account — see the byline on each post for attribution.
