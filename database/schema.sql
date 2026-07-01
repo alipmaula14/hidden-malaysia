@@ -1,13 +1,4 @@
--- ============================================================
--- Hidden Malaysia — Complete Database Schema
--- Single source of truth for all 9 tables.
---
--- To initialise a fresh database run:
---   node scripts/init-db.js
--- (creates tables + seeds all content in one step)
---
--- This file is a readable reference only.
--- ============================================================
+
 
 CREATE DATABASE IF NOT EXISTS hidden_malaysia
   CHARACTER SET utf8mb4

@@ -1,12 +1,7 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// ------------------------------------------------------------------
-// Explicit Railway vs local branch.
-// Railway's MySQL plugin auto-injects MYSQLHOST (among others).
-// If that variable is present we are on Railway — use all MYSQL* vars.
-// If it is absent we are in local dev — use DB_* vars from .env.
-// ------------------------------------------------------------------
+
 const isRailway = !!process.env.MYSQLHOST;
 
 const dbConfig = isRailway

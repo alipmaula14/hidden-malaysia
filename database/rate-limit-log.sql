@@ -1,7 +1,4 @@
--- Optional: persistent rate-limit event log.
--- Run this if you want to query abuse patterns over time rather than
--- reading Railway's log stream. The table stays small because old rows
--- are deleted automatically after 30 days by the DELETE event.
+
 
 CREATE TABLE IF NOT EXISTS rate_limit_log (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
